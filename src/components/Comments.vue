@@ -1,54 +1,67 @@
 <script>
-
+export default {
+    data() {
+        return {
+            apartments: []
+        }
+    },
+    methods: {
+        load() {
+            fetch("http://127.0.0.1:8000/api/apartments")
+                .then(response => response.json())
+                .then(data => {
+                    this.apartments = data;
+                })
+        }
+    },
+    mounted() {
+        this.load();
+    }
+}
 </script>
+
 <template>
-            <div class="container-xxl py-5">
-            <div class="container">
-                <div class="text-center mx-auto mb-5 wow fadeInUp" data-wow-delay="0.1s" style="max-width: 600px;">
-                    <h1 class="mb-3">Vélemények</h1>
-                    <p>Eirmod sed ipsum dolor sit rebum labore magna erat. Tempor ut dolore lorem kasd vero ipsum sit eirmod sit. Ipsum diam justo sed rebum vero dolor duo.</p>
-                </div>
-                <div class="owl-carousel testimonial-carousel wow fadeInUp" data-wow-delay="0.1s">
-                    <div class="testimonial-item bg-light rounded p-3">
-                        <div class="bg-white border rounded p-4">
-                            <p>Tempor stet labore dolor clita stet diam amet ipsum dolor duo ipsum rebum stet dolor amet diam stet. Est stet ea lorem amet est kasd kasd erat eos</p>
-                            <div class="d-flex align-items-center">
-                                <img class="img-fluid flex-shrink-0 rounded" src="" style="width: 45px; height: 45px;">
-                                <div class="ps-3">
-                                    <h6 class="fw-bold mb-1">Client Name</h6>
-                                    <small>Profession</small>
-                                </div>
+    <div class="container-xxl py-5 bg-light">
+        <div class="container">
+            <div class="text-center mx-auto mb-5 wow fadeInUp" data-wow-delay="0.1s" style="max-width: 600px;">
+                <h1 class="mb-3">Elérhető Apartmanok</h1>
+                <p>Fedezd fel legnépszerűbb szálláshelyeinket, melyek tökéletes kényelmet és kiváló elhelyezkedést kínálnak.</p>
+            </div>
+
+            <div class="row g-4">
+                <div v-for="apartment in apartments" :key="apartment.id" class="col-lg-4 col-md-6">
+                    <div class="card h-100 shadow-sm border-0 rounded-4">
+                        <img :src="apartment.cover_photo || 'https://via.placeholder.com/400x250?text=Apartman+Kép'" class="card-img-top rounded-top-4" alt="Apartment Image">
+                        <div class="card-body d-flex flex-column justify-content-between">
+                            <h5 class="card-title text-primary">{{ apartment.name }}</h5>
+                            <p class="card-text text-muted" style="min-height: 70px;">{{ apartment.description || 'Nincs leírás megadva.' }}</p>
+                            <div class="mt-3 d-flex justify-content-between align-items-center">
+                                <span class="fw-bold text-success fs-5">{{ apartment.price_per_night }} Ft / éj</span>
+                                <span class="badge bg-secondary">{{ apartment.max_capacity }} fő</span>
                             </div>
                         </div>
-                    </div>
-                    <div class="testimonial-item bg-light rounded p-3">
-                        <div class="bg-white border rounded p-4">
-                            <p>Tempor stet labore dolor clita stet diam amet ipsum dolor duo ipsum rebum stet dolor amet diam stet. Est stet ea lorem amet est kasd kasd erat eos</p>
-                            <div class="d-flex align-items-center">
-                                <img class="img-fluid flex-shrink-0 rounded" src="" style="width: 45px; height: 45px;">
-                                <div class="ps-3">
-                                    <h6 class="fw-bold mb-1">Client Name</h6>
-                                    <small>Profession</small>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="testimonial-item bg-light rounded p-3">
-                        <div class="bg-white border rounded p-4">
-                            <p>Tempor stet labore dolor clita stet diam amet ipsum dolor duo ipsum rebum stet dolor amet diam stet. Est stet ea lorem amet est kasd kasd erat eos</p>
-                            <div class="d-flex align-items-center">
-                                <img class="img-fluid flex-shrink-0 rounded" src="" style="width: 45px; height: 45px;">
-                                <div class="ps-3">
-                                    <h6 class="fw-bold mb-1">Client Name</h6>
-                                    <small>Profession</small>
-                                </div>
-                            </div>
+                        <div class="card-footer bg-white border-top-0 text-end">
+                            <button class="btn btn-outline-primary btn-sm rounded-pill">Részletek</button>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
 </template>
-<style scoped>
 
+<style scoped>
+.card {
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+}
+
+.card-img-top {
+    object-fit: cover;
+    height: 250px;
+}
 </style>

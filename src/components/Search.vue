@@ -11,108 +11,104 @@ export default {
     },
     data() {
         return {
-            filters: false
+            showFilters: false,
+            types: [],
+            filters: {
+                wellness: false,
+                breakfast: false,
+                parking: false,
+                wifi: false,
+                all_inclusive: false,
+                near_the_beach: false,
+                near_the_center: false,
+                pet_friendly: false,
+                smoking_allowed: false
+            }
         }
     },
     methods: {
         filterSite() {
-            this.filters = !this.filters
+            this.showFilters = !this.showFilters;
+        },
+        fetchTypes() {
+            fetch("http://127.0.0.1:8000/api/types")
+                .then(response => response.json())
+                .then(data => {
+                    this.types = data;
+                })
+                .catch(error => {
+                    console.error("Hiba a típusok lekérésekor:", error);
+                });
         }
+    },
+    mounted() {
+        this.fetchTypes();
     }
 }
 </script>
+
 <template>
-    <div class="container-fluid bg-primary wow fadeIn" data-wow-delay="0.1s" style="padding: 35px;">
+    <!-- Keresősáv -->
+    <div class="container-fluid bg-primary text-white py-4 px-3 rounded-bottom shadow wow fadeIn" data-wow-delay="0.1s">
         <div class="container">
-            <div class="row g-2">
-                <div class="col-md-10">
-                    <div class="row g-2">
-                        <div class="col-md-4">
-                            <input type="text" class="form-control border-0 py-3" placeholder="Város">
-                        </div>
-                        <div class="col-md-4">
-                            <select class="form-select border-0 py-3">
-                                <option value="1">Apartman</option>
-                                <option value="2">Luxus ingatlan</option>
-                                <option value="3" selected>Szálloda</option>
-                                <option value="4">Családi ház</option>
-                            </select>
-                        </div>
-                        <div class="col-md-4">
-                            <input type="button" value="Filterek" @click="filterSite" class="btn btn-dark w-100 h-100">
-                        </div>
-                    </div>
+            <div class="row g-3 align-items-center">
+                <div class="col-md-4">
+                    <input type="text" class="form-control border-0 py-3 px-4 shadow-sm" placeholder="Város">
+                </div>
+                <div class="col-md-3">
+                    <select class="form-select border-0 py-3 shadow-sm">
+                        <option v-for="type in types" :key="type.id" :value="type.id">
+                            {{ type.name }}
+                        </option>
+                    </select>
                 </div>
                 <div class="col-md-2">
-                    <button class="btn btn-dark border-0 w-100 py-3">Keresés</button>
+                    <button @click="filterSite" class="btn btn-outline-light w-100 py-3 shadow-sm">
+                        Szűrők
+                    </button>
+                </div>
+                <div class="col-md-3">
+                    <button class="btn btn-dark w-100 py-3 shadow-sm">
+                        Keresés
+                    </button>
                 </div>
             </div>
         </div>
     </div>
-    <div class="container-fluid d-flex justify-content-end mt-3" v-if="filters">
-    <div class="bg-dark text-light w-100 shadow-lg border-0 animated-panel">
-        <div class="bg-primary text-white text-center py-2">
-            <h5 class="mb-0">Szűrők</h5>
+
+    <!-- Szűrőpanel -->
+    <transition name="fade">
+        <div class="container my-3" v-if="showFilters">
+            <div class="mb-3 p-4 bg-light rounded shadow-sm">
+                <h5 class="text-primary mb-3">Szolgáltatások / Szűrők:</h5>
+                <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3">
+                    <div v-for="(value, key) in filters" :key="key" class="form-check form-switch">
+                        <input type="checkbox" class="form-check-input" v-model="filters[key]" :id="key" />
+                        <label class="form-check-label" :for="key">
+                            {{ key.replace(/_/g, " ").replace(/\b\w/g, l => l.toUpperCase()) }}
+                        </label>
+                    </div>
+                </div>
+                <div class="text-end mt-4">
+                    <button class="btn btn-primary px-4 py-2">Alkalmazás</button>
+                </div>
+            </div>
         </div>
-        <div class="p-3">
-            <ul class="list-group list-group-flush">
-                <li class="list-group-item bg-transparent text-light d-flex justify-content-between align-items-center">
-                    <div class="form-check form-switch">
-                        <input class="form-check-input" type="checkbox" id="wifi">
-                        <label class="form-check-label" for="wifi">WiFi</label>
-                    </div>
-                </li>
-                <li class="list-group-item bg-transparent text-light d-flex justify-content-between align-items-center">
-                    <div class="form-check form-switch">
-                        <input class="form-check-input" type="checkbox" id="parking">
-                        <label class="form-check-label" for="parking">Ingyenes parkolás</label>
-                    </div>
-                </li>
-                <li class="list-group-item bg-transparent text-light d-flex justify-content-between align-items-center">
-                    <div class="form-check form-switch">
-                        <input class="form-check-input" type="checkbox" id="pool">
-                        <label class="form-check-label" for="pool">Medence</label>
-                    </div>
-                </li>
-                <li class="list-group-item bg-transparent text-light d-flex justify-content-between align-items-center">
-                    <div class="form-check form-switch">
-                        <input class="form-check-input" type="checkbox" id="gym">
-                        <label class="form-check-label" for="gym">Edzőterem</label>
-                    </div>
-                </li>
-                <li class="list-group-item bg-transparent text-light d-flex justify-content-between align-items-center">
-                    <div class="form-check form-switch">
-                        <input class="form-check-input" type="checkbox" id="petFriendly">
-                        <label class="form-check-label" for="petFriendly">Állatbarát</label>
-                    </div>
-                </li>
-            </ul>
-        </div>
-        <div class="text-center p-3">
-            <button class="btn btn-success w-100">Alkalmazás</button>
-        </div>
-    </div>
-</div>
+    </transition>
+
     <Categories />
-
     <Highlight />
-
     <Comments />
 </template>
-<style>
-        @keyframes fadeIn {
-        from {
-            opacity: 0;
-            transform: translateY(20px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
 
-    /* Animáció alkalmazása */
-    .animated-panel {
-        animation: fadeIn 0.4s ease-in-out;
-    }
+<style scoped>
+.fade-enter-active,
+.fade-leave-active {
+    transition: all 0.3s ease;
+}
+.fade-enter-from,
+.fade-leave-to {
+    opacity: 0;
+    transform: translateY(-10px);
+}
 </style>

@@ -1,21 +1,45 @@
 <script>
 export default {
+    props: {
+        searchQuery: Object
+    },
     data() {
         return {
             apartments: []
         }
     },
+    watch: {
+        searchQuery: {
+            handler(newVal) {
+                if (newVal) this.loadFiltered(newVal);
+            },
+            immediate: true
+        }
+    },
     methods: {
-        load() {
+        loadAll() {
             fetch("http://127.0.0.1:8000/api/apartments")
-                .then(response => response.json())
+                .then(res => res.json())
                 .then(data => {
                     this.apartments = data;
-                })
+                });
+        },
+        loadFiltered(query) {
+            fetch("http://127.0.0.1:8000/api/apartments/search", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(query)
+            })
+                .then(res => res.json())
+                .then(data => {
+                    this.apartments = data;
+                });
         }
     },
     mounted() {
-        this.load();
+        this.loadAll();
     }
 }
 </script>

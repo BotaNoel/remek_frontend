@@ -1,18 +1,22 @@
 <script>
 import Categories from '@/components/Categories.vue';
 import Highlight from '@/components/Highlight.vue';
-import Comments from '@/components/Comments.vue';
+import Offers from '@/components/Offers.vue';
 
 export default {
     components: {
         Categories,
         Highlight,
-        Comments
+        Offers
     },
     data() {
         return {
-            showFilters: false,
             types: [],
+            showFilters: false,
+            searchParams: {
+                city: '',
+                type_id: null
+            },
             filters: {
                 wellness: false,
                 breakfast: false,
@@ -23,22 +27,25 @@ export default {
                 near_the_center: false,
                 pet_friendly: false,
                 smoking_allowed: false
-            }
-        }
+            },
+            searchQuery: null
+        };
     },
     methods: {
+        fetchTypes() {
+            fetch("http://127.0.0.1:8000/api/types")
+                .then(res => res.json())
+                .then(data => { this.types = data; });
+        },
         filterSite() {
             this.showFilters = !this.showFilters;
         },
-        fetchTypes() {
-            fetch("http://127.0.0.1:8000/api/types")
-                .then(response => response.json())
-                .then(data => {
-                    this.types = data;
-                })
-                .catch(error => {
-                    console.error("Hiba a típusok lekérésekor:", error);
-                });
+        searchApartments() {
+            this.searchQuery = {
+                city: this.searchParams.city,
+                type_id: this.searchParams.type_id,
+                filters: this.filters
+            };
         }
     },
     mounted() {
@@ -53,10 +60,11 @@ export default {
         <div class="container">
             <div class="row g-3 align-items-center">
                 <div class="col-md-4">
-                    <input type="text" class="form-control border-0 py-3 px-4 shadow-sm" placeholder="Város">
+                    <input type="text" v-model="searchParams.city" class="form-control border-0 py-3 px-4 shadow-sm" placeholder="Város">
                 </div>
                 <div class="col-md-3">
-                    <select class="form-select border-0 py-3 shadow-sm">
+                    <select v-model="searchParams.type_id" class="form-select border-0 py-3 shadow-sm">
+                        <option :value="null">Összes típus</option>
                         <option v-for="type in types" :key="type.id" :value="type.id">
                             {{ type.name }}
                         </option>
@@ -68,9 +76,7 @@ export default {
                     </button>
                 </div>
                 <div class="col-md-3">
-                    <button class="btn btn-dark w-100 py-3 shadow-sm">
-                        Keresés
-                    </button>
+                    <button @click="searchApartments" class="btn btn-dark w-100 py-3">Keresés</button>
                 </div>
             </div>
         </div>
@@ -89,16 +95,13 @@ export default {
                         </label>
                     </div>
                 </div>
-                <div class="text-end mt-4">
-                    <button class="btn btn-primary px-4 py-2">Alkalmazás</button>
-                </div>
             </div>
         </div>
     </transition>
 
     <Categories />
     <Highlight />
-    <Comments />
+    <Offers :searchQuery="searchQuery"/>
 </template>
 
 <style scoped>

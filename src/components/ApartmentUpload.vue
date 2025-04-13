@@ -29,7 +29,7 @@ export default {
                 address_number: '',
             },
             photos: [
-                { url: "" }
+                { file: null }
             ],
             types: [],
         };
@@ -112,30 +112,31 @@ export default {
                     console.error("Szállás létrejött, de a szűrők mentése sikertelen.");
                 });
         },
-        addPhoto() {
-            this.photos.push({ url: "" });
+        handlePhotoUpload(event, index) {
+            const file = event.target.files[0];
+            if (file) {
+                this.photos[index].file = file;
+            }
         },
         uploadPhotos(apartmentId) {
-            const photoUploads = this.photos.map(photo => {
+            const uploadPromises = this.photos.map(photo => {
+                const formData = new FormData();
+                formData.append('apartment_id', apartmentId);
+                formData.append('photo', photo.file);
+
                 return fetch("http://127.0.0.1:8000/api/photos", {
                     method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({
-                        apartment_id: apartmentId,
-                        url: photo.url
-                    })
+                    body: formData
                 });
             });
 
-            Promise.all(photoUploads)
+            Promise.all(uploadPromises)
                 .then(() => {
-                    console.log("Fotók mentve.");
+                    console.log("Fotók feltöltve.");
                 })
                 .catch(error => {
-                    console.error("Hiba a fotók mentésekor:", error);
-                    this.uploadError = "Szállás létrejött, de a fotók mentése sikertelen.";
+                    console.error("Hiba a fotók feltöltésekor:", error);
+                    this.uploadError = "Szállás létrejött, de a fotók feltöltése sikertelen.";
                 });
         }
     }
@@ -187,8 +188,9 @@ export default {
             </div>
             <h5>Fotók</h5>
             <div v-for="(photo, index) in photos" :key="index" class="mb-3">
-                <label class="form-label">Kép URL:</label>
-                <input type="text" v-model="photo.url" class="form-control" required>
+                <label class="form-label">Kép fájl:</label>
+                <input type="file" @change="handlePhotoUpload($event, index)" class="form-control" accept="image/*"
+                    required>
             </div>
             <button type="button" class="btn btn-secondary mb-3" @click="addPhoto">+ Új fotó</button>
             <div class="mb-3">

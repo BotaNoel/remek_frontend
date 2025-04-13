@@ -22,6 +22,7 @@ export default {
                 .then(res => res.json())
                 .then(data => {
                     this.apartments = data;
+                    console.log("Apartmanok (minden):", this.apartments);
                 });
         },
         loadFiltered(query) {
@@ -35,6 +36,7 @@ export default {
                 .then(res => res.json())
                 .then(data => {
                     this.apartments = data;
+                    console.log("Apartmanok (szűrt):", this.apartments);
                 });
         }
     },
@@ -55,7 +57,7 @@ export default {
             <div class="row g-4">
                 <div v-for="apartment in apartments" :key="apartment.id" class="col-lg-4 col-md-6">
                     <div class="card h-100 shadow-sm border-0 rounded-4">
-                        <img :src="apartment.cover_photo || 'https://via.placeholder.com/400x250?text=Apartman+Kép'" class="card-img-top rounded-top-4" alt="Apartment Image">
+                        <img :src="apartment.cover_photo ? apartment.cover_photo : 'https://placehold.co/400x250?text=Apartman+Kép'" class="card-img-top rounded-top-4" alt="Apartment Image">
                         <div class="card-body d-flex flex-column justify-content-between">
                             <h5 class="card-title text-primary">{{ apartment.name }}</h5>
                             <p class="card-text text-muted" style="min-height: 70px;">{{ apartment.description || 'Nincs leírás megadva.' }}</p>

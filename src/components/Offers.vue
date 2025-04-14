@@ -5,7 +5,8 @@ export default {
     },
     data() {
         return {
-            apartments: []
+            apartments: [],
+            currentApartmentId: null
         }
     },
     watch: {
@@ -38,6 +39,10 @@ export default {
                     this.apartments = data;
                     console.log("Apartmanok (szűrt):", this.apartments);
                 });
+        },
+
+        loadPhotos(apartmentId) {
+            
         }
     },
     mounted() {
@@ -57,7 +62,7 @@ export default {
             <div class="row g-4">
                 <div v-for="apartment in apartments" :key="apartment.id" class="col-lg-4 col-md-6">
                     <div class="card h-100 shadow-sm border-0 rounded-4">
-                        <img :src="apartment.cover_photo ? apartment.cover_photo : 'https://placehold.co/400x250?text=Apartman+Kép'" class="card-img-top rounded-top-4" alt="Apartment Image">
+                        <img :src="apartment.cover_photo || 'https://placehold.co/400x250?text=Apartman+Kép'" class="card-img-top rounded-top-4" alt="Apartment Image">
                         <div class="card-body d-flex flex-column justify-content-between">
                             <h5 class="card-title text-primary">{{ apartment.name }}</h5>
                             <p class="card-text text-muted" style="min-height: 70px;">{{ apartment.description || 'Nincs leírás megadva.' }}</p>
@@ -67,7 +72,9 @@ export default {
                             </div>
                         </div>
                         <div class="card-footer bg-white border-top-0 text-end">
-                            <button class="btn btn-outline-primary btn-sm rounded-pill">Részletek</button>
+                            <button class="btn btn-outline-primary btn-sm rounded-pill" @click="$emit('show-details', apartment.id)">
+                                Részletek
+                            </button>
                         </div>
                     </div>
                 </div>

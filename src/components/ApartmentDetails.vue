@@ -168,7 +168,7 @@ export default {
 
     <!-- Betöltés -->
     <div v-else class="text-center py-5">
-        <p class="text-muted">Hiba</p>
+        <p class="text-muted">Loading...</p>
     </div>
 </template>
 

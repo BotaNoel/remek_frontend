@@ -4,30 +4,86 @@ export default {
     data() {
         return {
             apartment: null,
+            reservations: [], // [{start_date, end_date}]
+            checkIn: '',
+            checkOut: '',
+            guests: 1,
+            errorMessage: '',
         };
     },
     computed: {
-        activeFilters() {
-            if (!this.apartment?.filters) return [];
-            return Object.entries(this.apartment.filters)
-                .filter(([key, v]) => v && !['id', 'apartment_id', 'created_at', 'updated_at'].includes(key))  // Kizárjuk a nem kívánt mezőket
-                .map(([k]) => k.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())); // Formázás
+        isDateRangeAvailable() {
+            if (!this.checkIn || !this.checkOut) return false;
+            const start = new Date(this.checkIn);
+            const end = new Date(this.checkOut);
+
+            // Ellenőrizze, hogy az új foglalás nem ütközik-e bármely meglévő időszakkal
+            return !this.reservations.some(res => {
+                const resStart = new Date(res.start_date);
+                const resEnd = new Date(res.end_date);
+                return (start <= resEnd && end >= resStart); // átfedés
+            });
         }
-    }
-    ,
+    },
     mounted() {
-        this.fetchDetails();
+        this.fetchApartment();
+        this.fetchReservations();
     },
     methods: {
-        fetchDetails() {
+        fetchApartment() {
             fetch(`http://127.0.0.1:8000/api/apartments/${this.id}`)
                 .then(res => res.json())
                 .then(data => {
-                    // Csak a szükséges adatokat töltjük be
-                    this.apartment = {
-                        ...data,
-                        filters: data.filters || {},
-                    };
+                    this.apartment = data;
+                })
+                .catch(() => {
+                    this.errorMessage = 'Nem sikerült betölteni az apartman adatait.';
+                });
+        },
+        fetchReservations() {
+            fetch(`http://127.0.0.1:8000/api/apartments/${this.id}/orders`)
+                .then(res => res.json())
+                .then(data => {
+                    this.reservations = data;
+                });
+        },
+        bookApartment() {
+            if (!this.checkIn || !this.checkOut) {
+                this.errorMessage = 'Kérjük, válassza ki az érkezési és távozási dátumot!';
+                return;
+            }
+            if (new Date(this.checkIn) >= new Date(this.checkOut)) {
+                this.errorMessage = 'A távozás dátuma később kell legyen, mint az érkezés!';
+                return;
+            }
+            if (!this.isDateRangeAvailable) {
+                this.errorMessage = 'Ez az időszak már foglalt!';
+                return;
+            }
+            if (this.guests > this.apartment.max_capacity) {
+                this.errorMessage = `A személyek száma nem haladhatja meg a ${this.apartment.max_capacity}-et.`;
+                return;
+            }
+
+            fetch(`http://127.0.0.1:8000/api/apartments/${this.id}/orders`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    arrival_date: this.checkIn,
+                    departure_date: this.checkOut,
+                    headcount: this.guests
+                })
+            })
+                .then(res => res.json())
+                .then(() => {
+                    this.fetchReservations();
+                    this.checkIn = '';
+                    this.checkOut = '';
+                    this.guests = 1;
+                    this.errorMessage = '';
+                })
+                .catch(() => {
+                    this.errorMessage = 'Hiba történt a foglalás során.';
                 });
         }
     }
@@ -69,16 +125,41 @@ export default {
                         </div>
                     </div>
 
-                    <!-- Szolgáltatások -->
+                    <!-- Foglalási űrlap -->
                     <div class="mt-3">
-                        <h6 class="text-primary mb-2">🛎️ Szolgáltatások</h6>
-                        <div v-if="activeFilters.length" class="d-flex flex-wrap gap-2">
-                            <span v-for="(filter, index) in activeFilters" :key="index"
-                                class="badge bg-primary-subtle text-primary px-3 py-2 rounded-pill shadow-sm">
-                                {{ filter }}
-                            </span>
+                        <h6 class="text-primary mb-3">🗓️ Foglalás</h6>
+
+                        <div class="mb-3">
+                            <label class="form-label">Érkezés:</label>
+                            <input type="date" v-model="checkIn" class="form-control" />
                         </div>
-                        <p v-else class="text-muted fst-italic">Nincsenek megadott szolgáltatások.</p>
+
+                        <div class="mb-3">
+                            <label class="form-label">Távozás:</label>
+                            <input type="date" v-model="checkOut" class="form-control" />
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Személyek száma:</label>
+                            <input type="number" v-model.number="guests" class="form-control"
+                                :max="apartment.max_capacity" />
+                        </div>
+
+                        <button class="btn btn-primary w-100" @click="bookApartment">Foglalás</button>
+                        <p v-if="errorMessage" class="text-danger mt-2">{{ errorMessage }}</p>
+                    </div>
+
+                    <!-- Foglalási állapot -->
+                    <div class="mt-4">
+                        <h6 class="text-primary mb-2">🔖 Foglalási állapot</h6>
+                        <ul class="list-group">
+                            <li v-for="(reservation, index) in reservations" :key="index"
+                                class="list-group-item d-flex justify-content-between align-items-center">
+                                {{ reservation.arrival_date }} – {{ reservation.departure_date }}
+                                <span class="badge bg-danger text-white">Foglalt</span>
+                            </li>
+                        </ul>
+                        <p v-if="!reservations.length" class="text-muted mt-2">Még nincsenek foglalások.</p>
                     </div>
                 </div>
             </div>
@@ -87,7 +168,7 @@ export default {
 
     <!-- Betöltés -->
     <div v-else class="text-center py-5">
-        <p class="text-muted">Adatok betöltése...</p>
+        <p class="text-muted">Hiba</p>
     </div>
 </template>
 

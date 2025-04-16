@@ -92,6 +92,11 @@ export default {
 
 <template>
     <div v-if="apartment" class="container py-5">
+        <div class="mb-3">
+            <button class="btn btn-outline-primary" @click="$emit('back')">
+                Vissza
+            </button>
+        </div>
         <div class="card shadow-lg border-0 rounded-4 overflow-hidden">
             <div class="row g-0">
                 <!-- Bal oldal: Kép -->

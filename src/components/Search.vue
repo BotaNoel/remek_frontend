@@ -52,9 +52,11 @@ export default {
         },
         showApartmentDetails(id) {
             this.selectedApartmentId = id;
+            this.$emit('view-apartment', true);
         },
         backToList() {
             this.selectedApartmentId = null;
+            this.$emit('view-apartment', false);
         }
     },
     mounted() {

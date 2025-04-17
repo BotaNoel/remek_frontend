@@ -57,10 +57,16 @@ export default {
         backToList() {
             this.selectedApartmentId = null;
             this.$emit('view-apartment', false);
+            setTimeout(() => {
+                this.searchApartments();
+            }, 100);
         }
     },
     mounted() {
         this.fetchTypes();
+        setTimeout(() => {
+            this.searchApartments();
+        }, 100);
     }
 }
 </script>
@@ -68,11 +74,13 @@ export default {
 <template>
     <div v-if="!selectedApartmentId">
         <!-- Keresősáv -->
-        <div class="container-fluid bg-primary text-white py-4 px-3 rounded-bottom shadow wow fadeIn" data-wow-delay="0.1s">
+        <div class="container-fluid bg-primary text-white py-4 px-3 rounded-bottom shadow wow fadeIn"
+            data-wow-delay="0.1s">
             <div class="container">
                 <div class="row g-3 align-items-center">
                     <div class="col-md-4">
-                        <input type="text" v-model="searchParams.city" class="form-control border-0 py-3 px-4 shadow-sm" placeholder="Város">
+                        <input type="text" v-model="searchParams.city" class="form-control border-0 py-3 px-4 shadow-sm"
+                            placeholder="Város">
                     </div>
                     <div class="col-md-3">
                         <select v-model="searchParams.type_id" class="form-select border-0 py-3 shadow-sm">
@@ -103,7 +111,7 @@ export default {
                         <div v-for="(value, key) in filters" :key="key" class="form-check form-switch">
                             <input type="checkbox" class="form-check-input" v-model="filters[key]" :id="key" />
                             <label class="form-check-label" :for="key">
-                                {{ key.replace(/_/g, " ").replace(/\b\w/g, l => l.toUpperCase()) }}
+                                {{key.replace(/_/g, " ").replace(/\b\w/g, l => l.toUpperCase())}}
                             </label>
                         </div>
                     </div>
@@ -113,11 +121,11 @@ export default {
 
         <Categories />
         <Highlight />
-        <Offers :searchQuery="searchQuery" @show-details="showApartmentDetails"/>
+        <Offers :searchQuery="searchQuery" @show-details="showApartmentDetails" />
     </div>
 
     <div v-else>
-            <ApartmentDetails :id="selectedApartmentId" @back="backToList" />
+        <ApartmentDetails :id="selectedApartmentId" @back="backToList" />
     </div>
 </template>
 
@@ -126,6 +134,7 @@ export default {
 .fade-leave-active {
     transition: all 0.3s ease;
 }
+
 .fade-enter-from,
 .fade-leave-to {
     opacity: 0;

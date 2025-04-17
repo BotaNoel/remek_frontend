@@ -101,8 +101,31 @@ export default {
             <div class="row g-0">
                 <!-- Bal oldal: Kép -->
                 <div class="col-lg-6">
-                    <img :src="apartment.photo || 'https://placehold.co/800x600?text=Nincs+kép'" alt="Apartment Image"
-                        class="w-100 h-100 object-fit-cover" style="max-height: 500px;" />
+                    <div v-if="apartment.photos.length > 1" id="photoCarousel" class="carousel slide"
+                        data-bs-ride="carousel">
+                        <div class="carousel-inner">
+                            <div v-for="(photo, index) in apartment.photos" :key="index"
+                                :class="['carousel-item', { active: index === 0 }]">
+                                <img :src="photo.url" class="d-block w-100"
+                                    style="max-height: 500px; object-fit: cover;" alt="Kép">
+                            </div>
+                        </div>
+                        <button class="carousel-control-prev" type="button" data-bs-target="#photoCarousel"
+                            data-bs-slide="prev">
+                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Előző</span>
+                        </button>
+                        <button class="carousel-control-next" type="button" data-bs-target="#photoCarousel"
+                            data-bs-slide="next">
+                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Következő</span>
+                        </button>
+                    </div>
+
+                    <div v-else>
+                        <img :src="apartment.photos[0]?.url || 'https://placehold.co/800x600?text=Nincs+kép'"
+                            alt="Apartment Image" class="w-100 h-100 object-fit-cover" style="max-height: 500px;" />
+                    </div>
                 </div>
 
                 <!-- Jobb oldal: Információk -->

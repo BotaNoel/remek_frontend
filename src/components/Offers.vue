@@ -40,10 +40,6 @@ export default {
                     console.log("Apartmanok (szűrt):", this.apartments);
                 });
         },
-
-        loadPhotos(apartmentId) {
-            
-        }
     },
     mounted() {
         this.loadAll();

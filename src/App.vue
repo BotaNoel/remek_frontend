@@ -28,7 +28,7 @@ export default {
       login: false,
       loggedInUser: '',
       showApartmentDetails: false,
-      showAbout: false
+      showAbout: false,
     }
   },
   methods: {
@@ -83,6 +83,8 @@ export default {
               <a href="" class="nav-item nav-link">Elérhetőség</a>
               <a href="http://127.0.0.1:8000/login" class="nav-item nav-link text-primary pointer"
                 id="login">Bejelentkezés/Profil</a>
+                <a href="http://127.0.0.1:8000/register" class="nav-item nav-link text-primary pointer"
+                id="login">Regisztráció</a>
             </div>
             <input type="button" class="btn btn-primary " value="Szálláshely feltöltése" @click="uploadSite()">
           </div>
@@ -96,8 +98,8 @@ export default {
         <About />
       </div>
       <div v-else-if="!apartmentUpload">
-        <HomePage />
-        <Search />
+        <HomePage v-if="!showApartmentDetails" />
+        <Search @view-apartment="showApartmentDetails = $event" />
       </div>
       <div v-else>
         <ApartmentUpload />

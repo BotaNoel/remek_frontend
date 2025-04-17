@@ -48,7 +48,9 @@ export default {
                     console.error("Hiba a típusok lekérésekor:", error);
                 });
         },
-
+        addPhoto() {
+            this.photos.push({ file: null });
+        },
         uploadApartment() {
             fetch("http://127.0.0.1:8000/api/apartments", {
                 method: "POST",
@@ -76,7 +78,6 @@ export default {
                     this.uploadError = "Hiba a szállás feltöltésénél.";
                 });
         },
-
         uploadLocation() {
             fetch("http://127.0.0.1:8000/api/locations", {
                 method: "POST",
@@ -94,7 +95,6 @@ export default {
                     this.uploadError = "Szállás létrejött, de a helyszín mentése sikertelen.";
                 });
         },
-
         uploadFilters() {
             fetch("http://127.0.0.1:8000/api/filters", {
                 method: "POST",

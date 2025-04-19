@@ -6,7 +6,7 @@
         <!-- Email Field -->
         <div class="mt-2">
           <label for="email" class="form-label">E-mail:</label>
-          <input type="email" id="email" v-model="user.email" class="form-control" required autofocus />
+          <input ref="emailInput" type="email" id="email" v-model="user.email" class="form-control" required />
           <p v-if="errors.email" class="text-danger mt-2">{{ errors.email }}</p>
         </div>
 
@@ -28,9 +28,11 @@
         <!-- Login Button -->
         <button type="button" @click="login" class="btn btn-primary mt-4">Bejelentkezés</button>
 
-        <!-- Forgot Password Link -->
-        <div class="mt-5">
-          <a href="/password/request" class="text-primary">Elfelejtetted a jelszavad?</a>
+        <!-- Register Link -->
+        <div class="mt-4">
+          <p>Még nincs fiókod?
+            <button class="btn btn-link p-0 m-0 align-baseline text-primary" @click="$emit('register')">Regisztrálj most!</button>
+          </p>
         </div>
       </div>
     </div>
@@ -46,39 +48,51 @@ export default {
         password: "",
         remember: false,
       },
-      errors: {}, // Hibaüzenetek tárolása
+      errors: {},
     };
   },
   methods: {
     async login() {
-      this.errors = {};
+      this.errors = {};  // Clear previous errors
+      console.log("Attempting to log in with:", this.user);
 
       try {
         const response = await fetch("http://127.0.0.1:8000/api/login", {
           method: "POST",
           headers: {
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
           },
           body: JSON.stringify({
             email: this.user.email,
-            password: this.user.password
-          })
+            password: this.user.password,
+          }),
         });
 
         const data = await response.json();
+        console.log("Login response data:", data);
 
-        if (response.ok) {
+        if (response.ok && data.token) {
+          console.log("Login successful. Storing token...");
+
           localStorage.setItem("token", data.token);
           localStorage.setItem("user", JSON.stringify(data.user));
-          this.$router.push("/dashboard");
+
+          this.$emit("login"); // bezárja a login oldalt
+          this.$emit("logged_in", data.user); // átadja a user nevet
+          this.$root.showToast('Sikeres bejelentkezés! Üdv újra itt!', 'success');
         } else {
-          this.errors = data.errors || {};
+          console.log("Login failed:", data.errors);
+          this.errors = data.errors || { general: 'Hiba történt a bejelentkezés során' };
         }
       } catch (error) {
         console.error("Bejelentkezési hiba:", error);
         alert("Hiba történt a bejelentkezés során");
       }
-    }
+    },
+  },
+  mounted() {
+    // Focus the email input field after the component is mounted
+    this.$refs.emailInput.focus();
   },
 };
 </script>

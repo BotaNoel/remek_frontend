@@ -1,13 +1,13 @@
 <script>
 import Search from './components/Search.vue';
 import Login from './components/Login.vue';
+import Register from './components/Register.vue';
 import Footer from './components/Footer.vue';
 import ApartmentUpload from '@/components/ApartmentUpload.vue';
 import logo from './assets/icon-deal.png';
-import user from './assets/user.webp'
+import user from './assets/user.webp';
 import HomePage from './components/HomePage.vue';
 import About from './components/About.vue';
-
 
 export default {
   components: {
@@ -16,7 +16,8 @@ export default {
     ApartmentUpload,
     Login,
     HomePage,
-    About
+    About,
+    Register
   },
   data() {
     return {
@@ -26,9 +27,29 @@ export default {
       dropdownOpen: null,
       apartmentUpload: false,
       login: false,
+      register: false,
       loggedInUser: '',
       showApartmentDetails: false,
       showAbout: false,
+      token: null,
+      userId: null,
+      toast: {
+        show: false,
+        message: '',
+        type: 'success'
+      }
+    }
+  },
+  created() {
+    // Ellenőrizzük, hogy van-e bejelentkezett felhasználó a localStorage-ban
+    const storedToken = localStorage.getItem("token");
+    const storedUser = localStorage.getItem("user");
+
+    if (storedToken && storedUser) {
+      this.token = storedToken;
+      this.loggedInUser = JSON.parse(storedUser).name;
+      this.userId = JSON.parse(storedUser).id;  // Felhasználói ID beállítása
+      this.login = false;  // A bejelentkezési oldalt ne jelenítse meg
     }
   },
   methods: {
@@ -42,7 +63,12 @@ export default {
       this.apartmentUpload = !this.apartmentUpload
     },
     loginSite() {
-      this.login = !this.login
+      this.login = true;
+      this.register = false;
+    },
+    registerSite() {
+      this.register = true;
+      this.login = false;
     },
     logged_in(p) {
       this.loggedInUser = p.name;
@@ -51,10 +77,31 @@ export default {
       this.apartmentUpload = false;
       this.login = false;
       this.showAbout = true;
+    },
+    logout() {
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      this.token = null;
+      this.loggedInUser = '';
+      this.userId = null;
+      this.login = false;
+      this.register = false;
+      this.apartmentUpload = false;
+      this.showAbout = false;
+    },
+    showToast(message, type = 'success') {
+      this.toast.message = message;
+      this.toast.type = type;
+      this.toast.show = true;
+
+      setTimeout(() => {
+        this.toast.show = false;
+      }, 3000);
     }
   }
 }
 </script>
+
 <template>
   <div class="container-xxl bg-white p-0">
     <!-- Navbar -->
@@ -81,10 +128,20 @@ export default {
                 </div>
               </div>
               <a href="" class="nav-item nav-link">Elérhetőség</a>
-              <a href="http://127.0.0.1:8000/login" class="nav-item nav-link text-primary pointer"
-                id="login">Bejelentkezés/Profil</a>
-                <a href="http://127.0.0.1:8000/register" class="nav-item nav-link text-primary pointer"
-                id="login">Regisztráció</a>
+              <a v-if="!loggedInUser" href="#" @click.prevent="loginSite"
+                class="nav-item nav-link text-primary pointer">
+                Bejelentkezés
+              </a>
+              <a v-if="!loggedInUser" href="#" @click.prevent="registerSite"
+                class="nav-item nav-link text-primary pointer">
+                Regisztráció
+              </a>
+              <div v-else class="nav-item dropdown" @click="toggleDropdown('user')">
+                <a href="#" class="nav-link dropdown-toggle">Üdv, {{ loggedInUser }}</a>
+                <div class="dropdown-menu rounded-0 m-0" :class="{ 'show': dropdownOpen === 'user' }">
+                  <a href="#" class="dropdown-item" @click.prevent="logout">Kijelentkezés</a>
+                </div>
+              </div>
             </div>
             <input type="button" class="btn btn-primary " value="Szálláshely feltöltése" @click="uploadSite()">
           </div>
@@ -93,7 +150,8 @@ export default {
       <!-- Navbar -->
     </div>
 
-    <div v-if="!login">
+    <!-- Különböző oldalak dinamikus megjelenítése -->
+    <div v-if="!login && !register">
       <div v-if="showAbout">
         <About />
       </div>
@@ -105,12 +163,28 @@ export default {
         <ApartmentUpload />
       </div>
     </div>
-    <div v-else>
-      <Login @login="loginSite" @logged_in="logged_in" />
+
+    <!-- Login és Register oldalak -->
+    <div v-if="login">
+      <Login @login="loginSite" @logged_in="logged_in" @register="registerSite" />
     </div>
+    <div v-if="register">
+      <Register @register="registerSite" />
+    </div>
+
+    <!-- Toast értesítés -->
+    <div v-if="toast.show" :class="['toast-container position-fixed top-0 end-0 p-3', toast.type === 'success' ? 'text-bg-success' : 'text-bg-danger']" style="z-index: 9999;">
+      <div class="toast show align-items-center">
+        <div class="d-flex">
+          <div class="toast-body">{{ toast.message }}</div>
+        </div>
+      </div>
+    </div>
+
     <Footer />
   </div>
 </template>
+
 <style>
 .pointer {
   cursor: pointer;
@@ -125,5 +199,46 @@ export default {
 .fade-slide-leave-to {
   opacity: 0;
   transform: translateY(20px);
+}
+
+.toast-container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 9999;
+  min-width: 250px;
+  max-width: 400px;
+  background-color: #f9f9f9;
+  border-left: 6px solid;
+  border-radius: 10px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+  font-family: 'Segoe UI', sans-serif;
+  animation: slideIn 0.4s ease-out;
+  overflow: hidden;
+}
+
+.toast-body {
+  padding: 14px 18px;
+  font-size: 16px;
+  color: #333;
+}
+
+.toast-container.text-bg-success {
+  border-color: #198754;
+}
+
+.toast-container.text-bg-danger {
+  border-color: #dc3545;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 </style>

@@ -27,8 +27,7 @@
         <!-- Confirm Password Field -->
         <div class="mt-2">
           <label for="password_confirmation" class="form-label">Jelszó megerősítése:</label>
-          <input type="password" id="password_confirmation" v-model="newProfile.password_confirmation"
-            class="form-control" required />
+          <input type="password" id="password_confirmation" v-model="newProfile.password_confirmation" class="form-control" required />
           <p v-if="errors.password_confirmation" class="text-danger mt-2">{{ errors.password_confirmation }}</p>
         </div>
 
@@ -37,7 +36,6 @@
 
         <!-- Login Link -->
         <div class="mt-5">
-          <p>Már van fiókod? <router-link to="/login" class="text-primary">Bejelentkezés</router-link></p>
         </div>
       </div>
     </div>
@@ -65,7 +63,6 @@ export default {
           headers: {
             "Accept": "application/json",
             "Content-Type": "application/json",
-            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
           },
           body: JSON.stringify(this.newProfile)
         });
@@ -79,7 +76,9 @@ export default {
 
         // Sikeres regisztráció
         this.errors = {};
-        this.$router.push("/login");
+        this.$emit("register"); // visszavált login nézetre
+        this.$root.showToast('Sikeres regisztráció! Jelentkezz be az adataiddal.', 'success');
+        
       } catch (error) {
         console.error("Regisztráció sikertelen:", error);
         alert("Hiba történt a regisztráció során.");

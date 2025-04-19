@@ -32,9 +32,22 @@ export default {
                 { file: null }
             ],
             types: [],
+            userId: null,  // Bejelentkezett felhasználó ID-ja
+            token: null,  // Bejelentkezett felhasználó token-je
+            successMessage: "",
+            uploadError: ""
         };
     },
     created() {
+        // Bejelentkezett felhasználó adatainak lekérése
+        const storedToken = localStorage.getItem("token");
+        const storedUser = localStorage.getItem("user");
+
+        if (storedToken && storedUser) {
+            this.token = storedToken;
+            this.userId = JSON.parse(storedUser).id;  // Felhasználó ID
+        }
+
         this.fetchTypes();
     },
     methods: {
@@ -55,9 +68,14 @@ export default {
             fetch("http://127.0.0.1:8000/api/apartments", {
                 method: "POST",
                 headers: {
-                    "Content-Type": "application/json"
+                    "Content-Type": "application/json",
+                    'Accept': 'application/json',
+                    "Authorization": `Bearer ${this.token}`,  // Token a kérésekhez
                 },
-                body: JSON.stringify(this.apartment)
+                body: JSON.stringify({
+                    ...this.apartment,
+                    user_id: this.userId  // Felhasználó ID hozzáadása a szálláshely adataihoz
+                })
             })
                 .then(response => response.json())
                 .then(data => {
@@ -82,7 +100,8 @@ export default {
             fetch("http://127.0.0.1:8000/api/locations", {
                 method: "POST",
                 headers: {
-                    "Content-Type": "application/json"
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${this.token}`,  // Token a kérésekhez
                 },
                 body: JSON.stringify(this.location)
             })
@@ -99,7 +118,8 @@ export default {
             fetch("http://127.0.0.1:8000/api/filters", {
                 method: "POST",
                 headers: {
-                    "Content-Type": "application/json"
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${this.token}`,  // Token a kérésekhez
                 },
                 body: JSON.stringify(this.filters)
             })
@@ -109,7 +129,7 @@ export default {
                 })
                 .catch(error => {
                     console.error("Hiba a szűrők mentésekor:", error);
-                    console.error("Szállás létrejött, de a szűrők mentése sikertelen.");
+                    this.uploadError = "Szállás létrejött, de a szűrők mentése sikertelen.";
                 });
         },
         handlePhotoUpload(event, index) {
@@ -126,6 +146,9 @@ export default {
 
                 return fetch("http://127.0.0.1:8000/api/photos", {
                     method: "POST",
+                    headers: {
+                        "Authorization": `Bearer ${this.token}`  // Token a kérésekhez
+                    },
                     body: formData
                 });
             });

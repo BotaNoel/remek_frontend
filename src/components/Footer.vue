@@ -6,7 +6,7 @@
       <div class="container py-5">
         <div class="row g-5">
           <!-- Kapcsolat -->
-          <div class="col-lg-3 col-md-6">
+          <div class="col-lg-4 col-md-6">
             <h5 class="text-white mb-4">Elérhetőségek</h5>
             <p class="mb-2"><i class="fa fa-map-marker me-3"></i>Eger, Cifrakapu u. 158, 3300</p>
             <p class="mb-2"><i class="fa fa-phone me-3"></i>+36-20-111-1111</p>
@@ -14,25 +14,15 @@
             <p class="mb-2"><i class="fa fa-envelope me-3"></i>bekecs.szabolcs@nejanet.hu</p>
           </div>
   
-          <!-- Hasznos linkek -->
-          <div class="col-lg-3 col-md-6">
-            <h5 class="text-white mb-4">Hasznos oldalak</h5>
-            <a class="btn btn-link text-white-50" href="#">Rólunk</a>
-            <a class="btn btn-link text-white-50" href="#">GYIK</a>
-            <a class="btn btn-link text-white-50" href="#">Kapcsolat</a>
-            <a class="btn btn-link text-white-50" href="#">Általános Szerződési Feltételek</a>
-            <a class="btn btn-link text-white-50" href="#">Adatkezelési Tájékoztató</a>
-          </div>
-  
           <!-- Szállástulajdonosoknak -->
-          <div class="col-lg-3 col-md-6">
+          <div class="col-lg-4 col-md-6">
             <h5 class="text-white mb-4">Szállástulajdonosoknak</h5>
             <p>Szeretnéd meghirdetni szállásod? Regisztrálj nálunk és érd el a vendégeket egyszerűen!</p>
             <a href="#" class="btn btn-primary mt-2">Szállás feltöltése</a>
           </div>
   
           <!-- Rólunk -->
-          <div class="col-lg-3 col-md-6">
+          <div class="col-lg-4 col-md-6">
             <h5 class="text-white mb-4">Rólunk</h5>
             <p>A SleepIn célja, hogy megbízható és megfizethető szállásokat kínáljunk Magyarország szerte. Fedezd fel a legjobb nyaralókat, apartmanokat, családi házakat vagy akár szállodákat!</p>
           </div>

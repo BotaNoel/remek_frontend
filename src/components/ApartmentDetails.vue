@@ -133,6 +133,9 @@ export default {
                     <div>
                         <h2 class="text-primary fw-bold mb-3">{{ apartment.name }}</h2>
                         <p class="text-muted fst-italic mb-2">{{ apartment.type }}</p>
+                        <p class="mb-2">
+                            <strong>Feltöltötte:</strong> {{ apartment.uploader }}
+                        </p>
 
                         <p class="mb-2">
                             <strong>Ár / éj: </strong>

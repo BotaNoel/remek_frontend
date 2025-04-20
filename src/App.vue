@@ -28,6 +28,7 @@ export default {
       apartmentUpload: false,
       login: false,
       register: false,
+      showUploadTooltip: false,
       loggedInUser: '',
       showApartmentDetails: false,
       showAbout: false,
@@ -38,6 +39,18 @@ export default {
         message: '',
         type: 'success'
       }
+    }
+  },
+  mounted() {
+    // Tooltip logika (ha inaktív gombra húzza az egeret)
+    const uploadBtnContainer = document.querySelector('.btn-secondary')?.parentElement;
+    if (uploadBtnContainer) {
+      uploadBtnContainer.addEventListener('mouseenter', () => {
+        this.showUploadTooltip = true;
+      });
+      uploadBtnContainer.addEventListener('mouseleave', () => {
+        this.showUploadTooltip = false;
+      });
     }
   },
   created() {
@@ -143,7 +156,22 @@ export default {
                 </div>
               </div>
             </div>
-            <input type="button" class="btn btn-primary " value="Szálláshely feltöltése" @click="uploadSite()">
+            <!-- Szálláshely feltöltése gomb -->
+            <span v-if="!loggedInUser" class="position-relative d-inline-block">
+              <button v-if="!loggedInUser" class="btn btn-secondary" disabled>
+                Szálláshely feltöltése
+              </button>
+              <div class="position-absolute bg-dark text-white px-2 py-1 rounded shadow-sm"
+                style="top: 35px; left: 50%; transform: translateX(-50%); font-size: 14px; white-space: nowrap;"
+                v-show="showUploadTooltip">
+                Először be kell jelentkezned az oldalra
+              </div>
+            </span>
+
+            <!-- Aktív gomb ha be van jelentkezve -->
+            <button v-else class="btn btn-primary" @click="uploadSite">
+              Szálláshely feltöltése
+            </button>
           </div>
         </nav>
       </div>
@@ -166,14 +194,16 @@ export default {
 
     <!-- Login és Register oldalak -->
     <div v-if="login">
-      <Login @login="loginSite" @logged_in="logged_in" @register="registerSite" />
+      <Login @login="login = false" @logged_in="logged_in" @register="registerSite" />
     </div>
     <div v-if="register">
-      <Register @register="registerSite" />
+      <Register @register="() => { register = false; login = true; }" />
     </div>
 
     <!-- Toast értesítés -->
-    <div v-if="toast.show" :class="['toast-container position-fixed top-0 end-0 p-3', toast.type === 'success' ? 'text-bg-success' : 'text-bg-danger']" style="z-index: 9999;">
+    <div v-if="toast.show"
+      :class="['toast-container position-fixed top-0 end-0 p-3', toast.type === 'success' ? 'text-bg-success' : 'text-bg-danger']"
+      style="z-index: 9999;">
       <div class="toast show align-items-center">
         <div class="d-flex">
           <div class="toast-body">{{ toast.message }}</div>
@@ -236,6 +266,7 @@ export default {
     opacity: 0;
     transform: translateY(-20px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);

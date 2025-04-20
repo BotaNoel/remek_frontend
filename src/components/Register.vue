@@ -27,7 +27,8 @@
         <!-- Confirm Password Field -->
         <div class="mt-2">
           <label for="password_confirmation" class="form-label">Jelszó megerősítése:</label>
-          <input type="password" id="password_confirmation" v-model="newProfile.password_confirmation" class="form-control" required />
+          <input type="password" id="password_confirmation" v-model="newProfile.password_confirmation"
+            class="form-control" required />
           <p v-if="errors.password_confirmation" class="text-danger mt-2">{{ errors.password_confirmation }}</p>
         </div>
 
@@ -71,19 +72,21 @@ export default {
 
         if (!response.ok) {
           this.errors = data.errors || {};
+          this.$root.showToast('Hiba a regisztráció során. Ellenőrizd az adatokat!', 'danger'); // ❌ Toast hiba
           return;
         }
 
-        // Sikeres regisztráció
+        // ✅ Sikeres regisztráció
         this.errors = {};
-        this.$emit("register"); // visszavált login nézetre
         this.$root.showToast('Sikeres regisztráció! Jelentkezz be az adataiddal.', 'success');
-        
+        this.$emit("register"); // visszavált login nézetre
+
       } catch (error) {
         console.error("Regisztráció sikertelen:", error);
-        alert("Hiba történt a regisztráció során.");
+        this.$root.showToast('Hiba történt a regisztráció során.', 'danger'); // ❌ Toast hiba
       }
     }
+
   }
 };
 </script>

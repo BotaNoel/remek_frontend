@@ -17,21 +17,14 @@
           <p v-if="errors.password" class="text-danger mt-2">{{ errors.password }}</p>
         </div>
 
-        <!-- Remember Me Checkbox -->
-        <div class="block mt-4">
-          <label for="remember_me" class="inline-flex items-center">
-            <input type="checkbox" id="remember_me" v-model="user.remember" class="rounded text-indigo-600" />
-            <span class="ms-2 text-sm text-gray-600">Emlékezzen rám</span>
-          </label>
-        </div>
-
         <!-- Login Button -->
         <button type="button" @click="login" class="btn btn-primary mt-4">Bejelentkezés</button>
 
         <!-- Register Link -->
         <div class="mt-4">
           <p>Még nincs fiókod?
-            <button class="btn btn-link p-0 m-0 align-baseline text-primary" @click="$emit('register')">Regisztrálj most!</button>
+            <button class="btn btn-link p-0 m-0 align-baseline text-primary" @click="$emit('register')">Regisztrálj
+              most!</button>
           </p>
         </div>
       </div>
@@ -72,17 +65,15 @@ export default {
         console.log("Login response data:", data);
 
         if (response.ok && data.token) {
-          console.log("Login successful. Storing token...");
-
           localStorage.setItem("token", data.token);
           localStorage.setItem("user", JSON.stringify(data.user));
 
-          this.$emit("login"); // bezárja a login oldalt
-          this.$emit("logged_in", data.user); // átadja a user nevet
+          this.$emit("login"); // Login panel eltűnik
+          this.$emit("logged_in", data.user); // Felhasználói adat továbbítva
           this.$root.showToast('Sikeres bejelentkezés! Üdv újra itt!', 'success');
         } else {
-          console.log("Login failed:", data.errors);
-          this.errors = data.errors || { general: 'Hiba történt a bejelentkezés során' };
+          this.errors = data.errors || { general: 'Hibás e-mail vagy jelszó' };
+          this.$root.showToast('Hibás e-mail vagy jelszó!', 'danger'); // <--- Itt jelenik meg a toast hiba
         }
       } catch (error) {
         console.error("Bejelentkezési hiba:", error);

@@ -23,7 +23,6 @@ export default {
                 .then(res => res.json())
                 .then(data => {
                     this.apartments = data;
-                    console.log("Apartmanok (minden):", this.apartments);
                 });
         },
         loadFiltered(query) {
@@ -37,7 +36,6 @@ export default {
                 .then(res => res.json())
                 .then(data => {
                     this.apartments = data;
-                    console.log("Apartmanok (szűrt):", this.apartments);
                 });
         },
     },

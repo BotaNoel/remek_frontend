@@ -154,6 +154,27 @@ export default {
                                 {{ apartment.location.street }} {{ apartment.location.address_number }}
                             </p>
                         </div>
+
+                        <!-- Szűrők -->
+                        <div v-if="apartment.filters" class="mb-4">
+                            <h6 class="text-primary mb-2">🧩 Szolgáltatások</h6>
+                            <div class="d-flex flex-wrap gap-2">
+                                <span v-if="apartment.filters.wellness" class="badge bg-primary">Wellness</span>
+                                <span v-if="apartment.filters.breakfast" class="badge bg-primary">Reggeli</span>
+                                <span v-if="apartment.filters.parking" class="badge bg-primary">Parkoló</span>
+                                <span v-if="apartment.filters.wifi" class="badge bg-primary">Wi-Fi</span>
+                                <span v-if="apartment.filters.all_inclusive" class="badge bg-primary">All
+                                    Inclusive</span>
+                                <span v-if="apartment.filters.near_the_beach" class="badge bg-primary">Tengerpart
+                                    közelében</span>
+                                <span v-if="apartment.filters.near_the_center" class="badge bg-primary">Belváros
+                                    közelében</span>
+                                <span v-if="apartment.filters.pet_friendly"
+                                    class="badge bg-primary">Állatbarát</span>
+                                <span v-if="apartment.filters.smoking_allowed" class="badge bg-primary">Dohányzás
+                                    megengedett</span>
+                            </div>
+                        </div>
                     </div>
 
                     <!-- Foglalási űrlap -->
@@ -218,7 +239,7 @@ export default {
 }
 
 .badge {
-    font-size: 0.9rem;
-    font-weight: 500;
+    font-size: 0.85rem;
+    padding: 0.5em 0.75em;
 }
 </style>

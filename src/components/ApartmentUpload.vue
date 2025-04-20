@@ -50,6 +50,13 @@ export default {
 
         this.fetchTypes();
     },
+    computed: {
+        filteredFilters() {
+            // A 'apartment_id' kulcsot eltávolítjuk a filters objektumból
+            const { apartment_id, ...rest } = this.filters;
+            return rest;
+        }
+    },
     methods: {
         fetchTypes() {
             fetch("http://127.0.0.1:8000/api/types")
@@ -218,7 +225,7 @@ export default {
             <button type="button" class="btn btn-secondary mb-3" @click="addPhoto">+ Új fotó</button>
             <div class="mb-3">
                 <h5>Szolgáltatások / Szűrők:</h5>
-                <div v-for="(value, key) in filters" :key="key" class="form-check form-switch">
+                <div v-for="(value, key) in filteredFilters" :key="key" class="form-check form-switch">
                     <input type="checkbox" class="form-check-input" v-model="filters[key]" :id="key" />
                     <label class="form-check-label" :for="key">
                         {{key.replace(/_/g, " ").replace(/\b\w/g, l => l.toUpperCase())}}

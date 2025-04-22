@@ -122,7 +122,7 @@ export default {
             fetch(`http://127.0.0.1:8000/api/apartments/${this.id}/comments`)
                 .then(res => res.json())
                 .then(data => {
-                    this.comments = data;
+                    this.comments = data.comments;
                 });
         },
         checkIfUserCanComment() {
@@ -137,19 +137,46 @@ export default {
         submitComment() {
             if (!this.newComment || !this.newRating) return;
 
-            fetch(`http://127.0.0.1:8000/api/apartments/${this.id}/comments`, {
+            // 1. rating mentése
+            fetch('http://127.0.0.1:8000/api/ratings', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${localStorage.getItem("token")}`
+                },
                 body: JSON.stringify({
-                    user_id: this.userId,
-                    comment: this.newComment,
-                    rating_id: this.newRating
+                    apartment_id: this.id,
+                    score: this.newRating
                 })
             })
+                .then(res => res.json())
+                .then(ratingData => {
+                    if (ratingData.error) {
+                        alert(ratingData.error);
+                        return;
+                    }
+
+                    // 2. comment mentése rating_id-vel
+                    return fetch(`http://127.0.0.1:8000/api/apartments/${this.id}/comments`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            Authorization: `Bearer ${localStorage.getItem("token")}`
+                        },
+                        body: JSON.stringify({
+                            apartment_id: this.id,
+                            content: this.newComment,
+                            rating_id: ratingData.rating.id
+                        })
+                    });
+                })
                 .then(() => {
                     this.newComment = '';
                     this.newRating = 5;
                     this.fetchComments();
+                })
+                .catch(error => {
+                    console.error('Hiba történt:', error);
                 });
         }
     }
@@ -199,12 +226,18 @@ export default {
                         <!-- Komment lista -->
                         <div v-if="comments.length">
                             <div v-for="(comment, index) in comments" :key="index" class="border-bottom pb-3 mb-3">
-                                <p class="mb-1">
-                                    <strong>{{ comment.user.name }}</strong>
-                                    <span class="text-warning">({{ comment.rating.rating_value }} ⭐)</span>
+                                <p class="mb-1 d-flex align-items-center gap-2">
+                                    <i class="bi bi-person-circle text-primary fs-5"></i>
+                                    <strong>{{ comment.user }}</strong>
+                                    <span class="text-warning">
+                                        <span v-for="n in comment.rating" :key="n">★</span>
+                                        <span v-for="n in 5 - comment.rating" :key="'empty-' + n"
+                                            class="text-muted">★</span>
+                                    </span>
                                 </p>
-                                <p class="mb-0">{{ comment.comment }}</p>
+                                <p class="mb-0">{{ comment.content }}</p>
                             </div>
+
                         </div>
                         <p v-else class="text-muted">Még nem érkezett hozzászólás ehhez az apartmanhoz.</p>
 

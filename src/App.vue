@@ -8,6 +8,7 @@ import logo from './assets/icon-deal.png';
 import user from './assets/user.webp';
 import HomePage from './components/HomePage.vue';
 import About from './components/About.vue';
+import ContactInfo from './components/ContactInfo.vue';
 
 export default {
   components: {
@@ -17,7 +18,8 @@ export default {
     Login,
     HomePage,
     About,
-    Register
+    Register,
+    ContactInfo
   },
   data() {
     return {
@@ -32,6 +34,7 @@ export default {
       loggedInUser: '',
       showApartmentDetails: false,
       showAbout: false,
+      showContact: false,
       token: null,
       userId: null,
       toast: {
@@ -89,7 +92,14 @@ export default {
     showAboutPage() {
       this.apartmentUpload = false;
       this.login = false;
+      this.showContact = false;
       this.showAbout = true;
+    },
+    showContactPage() {
+      this.apartmentUpload = false;
+      this.login = false;
+      this.showAbout = false;
+      this.showContact = true;
     },
     logout() {
       localStorage.removeItem("token");
@@ -134,13 +144,13 @@ export default {
               <div class="nav-item dropdown" @click="toggleDropdown('kinálatunk')">
                 <a href="#" class="nav-link dropdown-toggle">Kínálatunk</a>
                 <div class="dropdown-menu rounded-0 m-0" :class="{ 'show': dropdownOpen === 'kinálatunk' }">
-                  <a href="" class="dropdown-item">Apartmanok</a>
-                  <a href="" class="dropdown-item">Családi házak</a>
-                  <a href="" class="dropdown-item">Szállodák</a>
-                  <a href="" class="dropdown-item">Luxus ingatlanok</a>
+                  <a class="dropdown-item">Apartmanok</a>
+                  <a class="dropdown-item">Családi házak</a>
+                  <a class="dropdown-item">Szállodák</a>
+                  <a class="dropdown-item">Luxus ingatlanok</a>
                 </div>
               </div>
-              <a href="" class="nav-item nav-link">Elérhetőség</a>
+              <a href="" class="nav-item nav-link" @click.prevent="showContactPage">Elérhetőség</a>
               <a v-if="!loggedInUser" href="#" @click.prevent="loginSite"
                 class="nav-item nav-link text-primary pointer">
                 Bejelentkezés
@@ -182,6 +192,9 @@ export default {
     <div v-if="!login && !register">
       <div v-if="showAbout">
         <About />
+      </div> 
+      <div v-else-if="showContact">
+        <ContactInfo />
       </div>
       <div v-else-if="!apartmentUpload">
         <HomePage v-if="!showApartmentDetails" />

@@ -163,6 +163,9 @@ export default {
             Promise.all(uploadPromises)
                 .then(() => {
                     console.log("Fotók feltöltve.");
+                    setTimeout(() => {
+                        this.$emit('upload-complete');
+                    }, 300);
                 })
                 .catch(error => {
                     console.error("Hiba a fotók feltöltésekor:", error);

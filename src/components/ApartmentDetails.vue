@@ -137,7 +137,8 @@ export default {
         submitComment() {
             if (!this.newComment || !this.newRating) return;
 
-            // 1. rating mentése
+            const userName = this.userName;
+
             fetch('http://127.0.0.1:8000/api/ratings', {
                 method: 'POST',
                 headers: {
@@ -156,7 +157,7 @@ export default {
                         return;
                     }
 
-                    // 2. comment mentése rating_id-vel
+                    // Komment mentése
                     return fetch(`http://127.0.0.1:8000/api/apartments/${this.id}/comments`, {
                         method: 'POST',
                         headers: {
@@ -168,12 +169,19 @@ export default {
                             content: this.newComment,
                             rating_id: ratingData.rating.id
                         })
-                    });
-                })
-                .then(() => {
-                    this.newComment = '';
-                    this.newRating = 5;
-                    this.fetchComments();
+                    }).then(res => res.json())
+                        .then(() => {
+                            // 💡 Lokálisan is hozzáadjuk az új kommentet
+                            this.comments.unshift({
+                                user: userName,
+                                content: this.newComment,
+                                rating: this.newRating
+                            });
+
+                            // Űrlap kiürítése
+                            this.newComment = '';
+                            this.newRating = 5;
+                        });
                 })
                 .catch(error => {
                     console.error('Hiba történt:', error);

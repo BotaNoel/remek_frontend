@@ -141,15 +141,6 @@ export default {
             <div class="navbar-nav ms-auto">
               <a href="" class="nav-item nav-link active">Kezdőlap</a>
               <a href="" class="nav-item nav-link" @click.prevent="showAboutPage">Rólunk</a>
-              <div class="nav-item dropdown" @click="toggleDropdown('kinálatunk')">
-                <a href="#" class="nav-link dropdown-toggle">Kínálatunk</a>
-                <div class="dropdown-menu rounded-0 m-0" :class="{ 'show': dropdownOpen === 'kinálatunk' }">
-                  <a class="dropdown-item">Apartmanok</a>
-                  <a class="dropdown-item">Családi házak</a>
-                  <a class="dropdown-item">Szállodák</a>
-                  <a class="dropdown-item">Luxus ingatlanok</a>
-                </div>
-              </div>
               <a href="" class="nav-item nav-link" @click.prevent="showContactPage">Elérhetőség</a>
               <a v-if="!loggedInUser" href="#" @click.prevent="loginSite"
                 class="nav-item nav-link text-primary pointer">
@@ -201,7 +192,7 @@ export default {
         <Search @view-apartment="showApartmentDetails = $event" />
       </div>
       <div v-else>
-        <ApartmentUpload />
+        <ApartmentUpload @upload-complete="apartmentUpload = false" />
       </div>
     </div>
 

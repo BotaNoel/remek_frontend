@@ -112,6 +112,8 @@ export default {
                     this.checkOut = '';
                     this.guests = 1;
                     this.showConfirmation = false;
+
+                    this.checkIfUserCanComment();
                 })
                 .catch(() => {
                     this.errorMessage = 'Hiba történt a foglalás során.';

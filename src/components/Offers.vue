@@ -23,6 +23,7 @@ export default {
                 .then(res => res.json())
                 .then(data => {
                     this.apartments = data;
+                    this.fetchRatingsForApartments();
                 });
         },
         loadFiltered(query) {
@@ -36,8 +37,23 @@ export default {
                 .then(res => res.json())
                 .then(data => {
                     this.apartments = data;
+                    this.fetchRatingsForApartments();
                 });
         },
+        fetchRatingsForApartments() {
+            this.apartments.forEach((apartment, index) => {
+                fetch(`http://127.0.0.1:8000/api/apartments/${apartment.id}/ratings`)
+                    .then(res => res.json())
+                    .then(data => {
+                        const ratings = data.comments.map(c => c.rating).filter(r => r !== null);
+                        const avg = ratings.length > 0
+                            ? (ratings.reduce((sum, r) => sum + r, 0) / ratings.length).toFixed(1)
+                            : null;
+                    
+                        this.apartments[index].average_rating = avg;
+                    });
+            });
+        }
     },
     mounted() {
         this.loadAll();
@@ -59,7 +75,26 @@ export default {
                         <img :src="apartment.cover_photo || 'https://placehold.co/400x250?text=Apartman+Kép'" class="card-img-top rounded-top-4" alt="Apartment Image">
                         <div class="card-body d-flex flex-column justify-content-between">
                             <h5 class="card-title text-primary">{{ apartment.name }}</h5>
-                            <p class="card-text text-muted" style="min-height: 70px;">{{ apartment.description || 'Nincs leírás megadva.' }}</p>
+
+                            <!-- Rating -->
+                            <div class="mt-2">
+                                <template v-if="apartment.average_rating">
+                                    <span class="text-warning">
+                                        <template v-for="n in 5" :key="n">
+                                            <span>
+                                                {{ n <= Math.round(apartment.average_rating) ? '★' : '☆' }}
+                                            </span>
+                                        </template>
+                                    </span>
+                                    <small class="text-muted ms-2">({{ apartment.average_rating }} / 5)</small>
+                                </template>
+                                <template v-else>
+                                    <span class="text-muted">Nincs még értékelés</span>
+                                </template>
+                            </div>
+
+
+                            <p class="card-text text-muted mt-3" style="min-height: 70px;">{{ apartment.description || 'Nincs leírás megadva.' }}</p>
                             <div class="mt-3 d-flex justify-content-between align-items-center">
                                 <span class="fw-bold text-success fs-5">{{ apartment.price_per_night }} Ft / éj</span>
                                 <span class="badge bg-secondary">{{ apartment.max_capacity }} fő</span>

@@ -120,7 +120,7 @@ export default {
         </transition>
 
         <Categories />
-        <Highlight />
+        
         <Offers :searchQuery="searchQuery" @show-details="showApartmentDetails" />
     </div>
 

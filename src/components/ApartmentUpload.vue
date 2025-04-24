@@ -108,7 +108,7 @@ export default {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
-                    "Authorization": `Bearer ${this.token}`,  // Token a kérésekhez
+                    "Authorization": `Bearer ${this.token}`,
                 },
                 body: JSON.stringify(this.location)
             })
@@ -126,7 +126,7 @@ export default {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
-                    "Authorization": `Bearer ${this.token}`,  // Token a kérésekhez
+                    "Authorization": `Bearer ${this.token}`,
                 },
                 body: JSON.stringify(this.filters)
             })
@@ -154,7 +154,7 @@ export default {
                 return fetch("http://127.0.0.1:8000/api/photos", {
                     method: "POST",
                     headers: {
-                        "Authorization": `Bearer ${this.token}`  // Token a kérésekhez
+                        "Authorization": `Bearer ${this.token}`
                     },
                     body: formData
                 });

@@ -1,37 +1,3 @@
-<template>
-  <div class="container mt-3 text-center w-50">
-    <div class="card">
-      <h3 class="card-title text-primary">Bejelentkezés</h3>
-      <div class="card-body">
-        <!-- Email Field -->
-        <div class="mt-2">
-          <label for="email" class="form-label">E-mail:</label>
-          <input ref="emailInput" type="email" id="email" v-model="user.email" class="form-control" required />
-          <p v-if="errors.email" class="text-danger mt-2">{{ errors.email }}</p>
-        </div>
-
-        <!-- Password Field -->
-        <div class="mt-4">
-          <label for="password" class="form-label">Jelszó:</label>
-          <input type="password" id="password" v-model="user.password" class="form-control" required />
-          <p v-if="errors.password" class="text-danger mt-2">{{ errors.password }}</p>
-        </div>
-
-        <!-- Login Button -->
-        <button type="button" @click="login" class="btn btn-primary mt-4">Bejelentkezés</button>
-
-        <!-- Register Link -->
-        <div class="mt-4">
-          <p>Még nincs fiókod?
-            <button class="btn btn-link p-0 m-0 align-baseline text-primary" @click="$emit('register')">Regisztrálj
-              most!</button>
-          </p>
-        </div>
-      </div>
-    </div>
-  </div>
-</template>
-
 <script>
 export default {
   data() {
@@ -87,3 +53,37 @@ export default {
   },
 };
 </script>
+
+<template>
+  <div class="container mt-3 text-center w-50">
+    <div class="card">
+      <h3 class="card-title text-primary">Bejelentkezés</h3>
+      <div class="card-body">
+        <!-- Email Field -->
+        <div class="mt-2">
+          <label for="email" class="form-label">E-mail:</label>
+          <input ref="emailInput" type="email" id="email" v-model="user.email" class="form-control" required />
+          <p v-if="errors.email" class="text-danger mt-2">{{ errors.email }}</p>
+        </div>
+
+        <!-- Password Field -->
+        <div class="mt-4">
+          <label for="password" class="form-label">Jelszó:</label>
+          <input type="password" id="password" v-model="user.password" class="form-control" required />
+          <p v-if="errors.password" class="text-danger mt-2">{{ errors.password }}</p>
+        </div>
+
+        <!-- Login Button -->
+        <button type="button" @click="login" class="btn btn-primary mt-4">Bejelentkezés</button>
+
+        <!-- Register Link -->
+        <div class="mt-4">
+          <p>Még nincs fiókod?
+            <button class="btn btn-link p-0 m-0 align-baseline text-primary" @click="$emit('register')">Regisztrálj
+              most!</button>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>

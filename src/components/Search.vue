@@ -59,14 +59,14 @@ export default {
             this.$emit('view-apartment', false);
             setTimeout(() => {
                 this.searchApartments();
-            }, 100);
+            }, 300);
         }
     },
     mounted() {
         this.fetchTypes();
         setTimeout(() => {
             this.searchApartments();
-        }, 100);
+        }, 300);
     }
 }
 </script>

@@ -9,8 +9,8 @@
           <div class="col-lg-4 col-md-6">
             <h5 class="text-white mb-4">Elérhetőségek</h5>
             <p class="mb-2"><i class="fa fa-map-marker me-3"></i>Eger, Cifrakapu u. 158, 3300</p>
-            <p class="mb-2"><i class="fa fa-phone me-3"></i>+36-20-111-1111</p>
-            <p class="mb-2"><i class="fa fa-envelope me-3"></i>bota.balazs@nejanet.hu</p>
+            <p class="mb-2"><i class="fa fa-phone me-3"></i>+36-30-880-0080</p>
+            <p class="mb-2"><i class="fa fa-envelope me-3"></i>botanoel05gmail.com</p>
             <p class="mb-2"><i class="fa fa-envelope me-3"></i>bekecs.szabolcs@nejanet.hu</p>
           </div>
   

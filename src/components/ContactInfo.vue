@@ -11,12 +11,12 @@
             },
             {
               title: 'Telefon',
-              value: '+36 30 123 4567',
+              value: '+36 30 880 0080',
               icon: 'fas fa-phone-alt'
             },
             {
               title: 'Email',
-              value: 'bota.balazs@nejanet.hu vagy bekecs.szabolcs@nejanet.hu',
+              value: 'botanoel05gmail.com vagy bekecs.szabolcs@nejanet.hu',
               icon: 'fas fa-envelope'
             },
             {

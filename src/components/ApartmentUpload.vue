@@ -142,6 +142,14 @@ export default {
         handlePhotoUpload(event, index) {
             const file = event.target.files[0];
             if (file) {
+                const maxSize = 2 * 1024 * 1024; // 2 MB byte-ban
+
+                if (file.size > maxSize) {
+                    alert("A fájl mérete nem haladhatja meg a 2 MB-ot!");
+                    event.target.value = ""; // üríti a file input mezőt
+                    return;
+                }
+
                 this.photos[index].file = file;
             }
         },

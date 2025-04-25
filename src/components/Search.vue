@@ -121,6 +121,8 @@ export default {
 
         <Categories />
         
+        <Highlight @show-details="showApartmentDetails"/>
+
         <Offers :searchQuery="searchQuery" @show-details="showApartmentDetails" />
     </div>
 
